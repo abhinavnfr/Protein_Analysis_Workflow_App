@@ -32,7 +32,7 @@ def retrieve_fasta(accession):
     except Exception as e:
         return f"Failed to retrieve {accession}: {str(e)}"
 
-def main():
+def fetch_fasta_main():
     # Specify the file containing accession numbers
     file_path = input("Enter the path to the text file containing accession numbers: ")
 
@@ -56,4 +56,4 @@ def main():
     print("Sequences saved to sequences.fasta")
 
 if __name__ == "__main__":
-    main()
+    fetch_fasta_main()
