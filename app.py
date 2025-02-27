@@ -9,8 +9,16 @@ def main():
     # File uploader for accession numbers
     uploaded_file = st.file_uploader("Choose a text file containing accession numbers", type=["txt"])
     
-    if st.button("Fetch FASTA Sequences"):
-        output_file = fs.fetch_fasta_main(uploaded_file)
+    # Initialize session state to track if the process is in progress
+    if "fetching" not in st.session_state:
+        st.session_state.fetching = False
+    
+    if st.button("Fetch FASTA Sequences", disabled=st.session_state.fetching):
+        # Set the fetching state to True to disable button and file uploader
+        st.session_state.fetching = True
+    
+        # Fetch the sequences
+        output_file = fetch_fasta_main(uploaded_file)
         if output_file:
             # Provide a download link for the user
             with open(output_file, 'rb') as f:
@@ -20,6 +28,10 @@ def main():
                     file_name='sequences.fasta',
                     mime='text/plain'
                 )
+    
+    # Disable the file uploader if the fetching is in progress
+    if st.session_state.fetching:
+        st.warning("Fetching in progress. Please wait...")
 
 if __name__ == "__main__":
     main()
