@@ -32,28 +32,27 @@ def retrieve_fasta(accession):
     except Exception as e:
         return f"Failed to retrieve {accession}: {str(e)}"
 
-def fetch_fasta_main():
-    # Specify the file containing accession numbers
-    file_path = input("Enter the path to the text file containing accession numbers: ")
+def fetch_fasta_main(uploaded_file):
+    if uploaded_file is not None:
+        try:
+            # Read accession numbers from the uploaded file
+            accessions = [line.strip() for line in uploaded_file.read().decode("utf-8").splitlines()]
+        except Exception as e:
+            st.error("Error reading the file. Please ensure it is a text file containing accession numbers.")
+            return None
 
-    try:
-        with open(file_path, 'r') as file:
-            accessions = [line.strip() for line in file.readlines()]
-    except FileNotFoundError:
-        print("File not found. Please ensure the file path is correct.")
-        return
+        # Retrieve the FASTA sequences
+        results = {}
+        for accession in accessions:
+            results[accession] = retrieve_fasta(accession)
 
-    # Retrieve the FASTA sequences
-    results = {}
-    for accession in accessions:
-        results[accession] = retrieve_fasta(accession)
+        # Save the retrieved sequences to a temporary file
+        output_file_path = 'sequences.fasta'
+        with open(output_file_path, 'w') as file:
+            for accession, sequence in results.items():
+                file.write(sequence + '\n')
 
-    # Save the retrieved sequences to a file
-    with open('sequences.fasta', 'w') as file:
-        for accession, sequence in results.items():
-            file.write(sequence + '\n')
+        return output_file_path 
 
-    print("Sequences saved to sequences.fasta")
-
-if __name__ == "__main__":
-    fetch_fasta_main()
+# if __name__ == "__main__":
+    # fetch_fasta_main()
