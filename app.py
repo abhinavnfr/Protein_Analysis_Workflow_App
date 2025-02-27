@@ -2,21 +2,10 @@ import streamlit as st
 import fetch_fasta_sequence as fs
 
 def main():
-    st.title("Protein Sequence Analysis Workflow Application")
+    # st.title("Protein Sequence Analysis Workflow Application")
+    st.markdown("<h1 style='color: pink;'>Protein Sequence Analysis Workflow Application</h1>", unsafe_allow_html=True)
     st.write("")
     st.subheader("Step 1: Fetch FASTA sequences from accession numbers")
-    import streamlit as st
-
-    st.markdown(
-    """
-    <style>
-    body {
-        background-color: #f0f2f5;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-    )
     
     # File uploader for accession numbers
     uploaded_file = st.file_uploader("Choose a text file containing accession numbers", type=["txt"])
