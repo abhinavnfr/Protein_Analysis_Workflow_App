@@ -7,6 +7,7 @@ Original file is located at
     https://colab.research.google.com/drive/1UwdB5D-T7TTHxU8Cynx-OLjgPwaLoF3U
 """
 
+!pip install biopython
 
 
 from Bio import Entrez, SeqIO
