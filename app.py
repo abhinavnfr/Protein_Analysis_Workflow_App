@@ -5,6 +5,7 @@ def main():
     st.title("Protein Sequence Analysis Workflow Application")
     st.write("")
     st.subheader("Step 1: Fetch FASTA sequences from accession numbers")
+    st.color(pink)
     
     # File uploader for accession numbers
     uploaded_file = st.file_uploader("Choose a text file containing accession numbers", type=["txt"])
