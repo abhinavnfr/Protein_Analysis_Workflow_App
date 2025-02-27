@@ -10,7 +10,7 @@ def main():
     uploaded_file = st.file_uploader("Choose a text file containing accession numbers", type=["txt"])
     
     if st.button("Fetch FASTA Sequences"):
-        output_file = fetch_fasta_main(uploaded_file)
+        output_file = fs.fetch_fasta_main(uploaded_file)
         if output_file:
             # Provide a download link for the user
             with open(output_file, 'rb') as f:
