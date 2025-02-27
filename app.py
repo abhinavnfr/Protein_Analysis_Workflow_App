@@ -1,5 +1,5 @@
 import streamlit as st
-import fetch_FASTA_sequence as fs
+import fetch_fasta_sequence as fs
 
 def main():
     st.title("Protein Sequence Analysis Workflow Application")
