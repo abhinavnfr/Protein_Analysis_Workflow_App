@@ -46,11 +46,13 @@ def fetch_fasta_main(uploaded_file):
         results = {}
         total_accessions = len(accessions)
         progress_bar = st.progress(0)  # Initialize the progress bar
+        percentage_text = st.empty()  # Placeholder for percentage text
 
         for i, accession in enumerate(accessions):
             results[accession] = retrieve_fasta(accession)
             progress_percentage = (i + 1) / total_accessions  # Calculate percentage
             progress_bar.progress(progress_percentage)  # Update the progress bar
+            percentage_text.text(f"Progress: {int(progress_percentage * 100)}%")  # Update percentage text
 
         # Save the retrieved sequences to a temporary file
         output_file_path = 'sequences.fasta'
