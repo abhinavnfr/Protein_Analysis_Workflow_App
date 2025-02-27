@@ -18,7 +18,7 @@ def main():
         st.session_state.fetching = True
     
         # Fetch the sequences
-        output_file = fetch_fasta_main(uploaded_file)
+        output_file = fs.fetch_fasta_main(uploaded_file)
         if output_file:
             # Provide a download link for the user
             with open(output_file, 'rb') as f:
