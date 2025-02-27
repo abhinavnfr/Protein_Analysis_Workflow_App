@@ -43,8 +43,13 @@ def fetch_fasta_main(uploaded_file):
 
         # Retrieve the FASTA sequences
         results = {}
-        for accession in accessions:
+        total_accessions = len(accessions)
+        progress_bar = st.progress(0)  # Initialize the progress bar
+
+        for i, accession in enumerate(accessions):
             results[accession] = retrieve_fasta(accession)
+            progress_percentage = (i + 1) / total_accessions  # Calculate percentage
+            progress_bar.progress(progress_percentage)  # Update the progress bar
 
         # Save the retrieved sequences to a temporary file
         output_file_path = 'sequences.fasta'
@@ -52,7 +57,4 @@ def fetch_fasta_main(uploaded_file):
             for accession, sequence in results.items():
                 file.write(sequence + '\n')
 
-        return output_file_path 
-
-# if __name__ == "__main__":
-    # fetch_fasta_main()
+        return output_file_path
