@@ -10,6 +10,7 @@ Original file is located at
 
 
 from Bio import Entrez, SeqIO
+import streamlit as st
 
 def retrieve_fasta(accession):
     """
