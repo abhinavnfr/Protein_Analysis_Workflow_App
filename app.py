@@ -30,6 +30,7 @@ def main():
                 ):
                     st.session_state.clear()  # Reset session state
                     st.session_state.fetching = False  # Ensure fetching state is reset
+                    st.session_state.uploader = None #Clear the Uploader State
                     st.rerun()  # Restart the app to initial state
 
 if __name__ == "__main__":
