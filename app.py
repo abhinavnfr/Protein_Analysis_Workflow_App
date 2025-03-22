@@ -32,6 +32,7 @@ def main():
             # CHANGE 3: Moved state reset outside the download button block to execute after fetch
             st.session_state.fetching = False  # Reset fetching state
             # CHANGE 4: Removed st.session_state.clear() and kept targeted reset
+            st.session_state.uploader = None  # Clear the uploader state (now works with key)
             st.rerun()  # Restart the app to initial state
             # CHANGE 5: Added this warning block outside the if condition to show during fetch
     if st.session_state.fetching:
