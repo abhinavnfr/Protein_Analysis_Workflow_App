@@ -2,7 +2,6 @@ import streamlit as st
 import fetch_fasta_sequence as fs
 
 def main():
-    # st.title("Protein Sequence Analysis Workflow Application")
     st.markdown("<h1 style='color: pink;'>Protein Sequence Analysis Workflow Application</h1>", unsafe_allow_html=True)
     st.write("")
     st.subheader("Step 1: Fetch FASTA sequences from accession numbers")
@@ -23,14 +22,17 @@ def main():
         if output_file:
             # Provide a download link for the user
             with open(output_file, 'rb') as f:
-                st.download_button(
+                if st.download_button(
                     label="Download Sequences",
                     data=f,
                     file_name='sequences.fasta',
                     mime='text/plain'
-                )
+                ):
+                    st.session_state.clear()  # Reset session state
+                    st.session_state.fetching = False  # Ensure fetching state is reset
+                    st.rerun()  # Restart the app to initial state
     
-    # Disable the file uploader if the fetching is in progress
+    # Show warning only if fetching is in progress
     if st.session_state.fetching:
         st.warning("Fetching in progress. Please wait...")
 
