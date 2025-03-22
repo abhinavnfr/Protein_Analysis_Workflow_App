@@ -31,10 +31,6 @@ def main():
                     st.session_state.clear()  # Reset session state
                     st.session_state.fetching = False  # Ensure fetching state is reset
                     st.rerun()  # Restart the app to initial state
-    
-    # Show warning only if fetching is in progress
-    if st.session_state.fetching:
-        st.warning("Fetching in progress. Please wait...")
 
 if __name__ == "__main__":
     main()
