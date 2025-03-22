@@ -1,5 +1,6 @@
 import streamlit as st
 import fetch_fasta_sequence as fs
+import os
 
 def main():
     st.markdown("<h1 style='color: pink;'>Protein Sequence Analysis Workflow Application</h1>", unsafe_allow_html=True)
@@ -9,27 +10,27 @@ def main():
     # Initialize session state
     if "fetching" not in st.session_state:
         st.session_state.fetching = False
-    if "reset_uploader" not in st.session_state:
-        st.session_state.reset_uploader = False
 
-    # File uploader with dynamic key
+    # File uploader
     uploaded_file = st.file_uploader(
         "Choose a text file containing accession numbers", 
         type=["txt"], 
-        key="uploader" if not st.session_state.reset_uploader else "uploader_reset"
+        key="uploader"
     )
     
     if st.button("Fetch FASTA Sequences", disabled=st.session_state.fetching):
-        if uploaded_file is not None:  # Ensure a file is uploaded
+        if uploaded_file is not None:
             st.session_state.fetching = True
+            st.write("Starting fetch process...")  # Debug step
+            
+            # Fetch the sequences
             try:
-                # Fetch the sequences
                 output_file = fs.fetch_fasta_main(uploaded_file)
-                st.write(f"Debug: output_file = {output_file}")  # Debug output
+                st.write(f"Output file from fetch_fasta_main: {output_file}")  # Debug step
                 
                 if output_file:
-                    # Attempt to open and provide download link
-                    try:
+                    if os.path.exists(output_file):
+                        st.write(f"File exists at: {output_file}")  # Debug step
                         with open(output_file, 'rb') as f:
                             st.download_button(
                                 label="Download Sequences",
@@ -37,29 +38,23 @@ def main():
                                 file_name='sequences.fasta',
                                 mime='text/plain'
                             )
-                        # Reset state only after successful fetch and button render
-                        st.session_state.fetching = False
-                        st.session_state.reset_uploader = True
-                        st.rerun()
-                    except FileNotFoundError:
-                        st.error(f"Error: Could not find file {output_file}")
-                    except Exception as e:
-                        st.error(f"Error opening file: {e}")
+                        st.success("Sequences fetched successfully!")
+                    else:
+                        st.error(f"File not found: {output_file}")
                 else:
-                    st.error("Error: No output file generated from fetch_fasta_main")
-                    st.session_state.fetching = False  # Reset fetching on failure
+                    st.error("fetch_fasta_main returned None or empty value")
+                
+                # Reset state
+                st.session_state.fetching = False
+                st.rerun()  # Only rerun after everything is done
+            
             except Exception as e:
-                st.error(f"Error in fetch_fasta_main: {e}")
-                st.session_state.fetching = False  # Reset fetching on failure
+                st.error(f"Error in fetch process: {e}")
+                st.session_state.fetching = False
         else:
-            st.warning("Please upload a file before fetching sequences.")
+            st.warning("Please upload a file before fetching.")
     
-    # Reset uploader state after rerun
-    if st.session_state.reset_uploader and not st.session_state.fetching:
-        st.session_state.reset_uploader = False
-        st.rerun()
-    
-    # Show fetching message only when in progress
+    # Show fetching message
     if st.session_state.fetching:
         st.warning("Fetching in progress. Please wait...")
 
