@@ -12,7 +12,7 @@ def main():
     if "reset_uploader" not in st.session_state:
         st.session_state.reset_uploader = False
 
-    # File uploader with a key; reset it conditionally
+    # File uploader with dynamic key
     uploaded_file = st.file_uploader(
         "Choose a text file containing accession numbers", 
         type=["txt"], 
@@ -20,29 +20,44 @@ def main():
     )
     
     if st.button("Fetch FASTA Sequences", disabled=st.session_state.fetching):
-        # Set fetching state to True
-        st.session_state.fetching = True
-        
-        # Fetch the sequences
-        output_file = fs.fetch_fasta_main(uploaded_file)
-        if output_file:
-            # Provide a download link
-            with open(output_file, 'rb') as f:
-                st.download_button(
-                    label="Download Sequences",
-                    data=f,
-                    file_name='sequences.fasta',
-                    mime='text/plain'
-                )
-            # Reset state after fetch completes
-            st.session_state.fetching = False
-            st.session_state.reset_uploader = True  # Signal to reset uploader
-            st.rerun()  # Refresh the app
+        if uploaded_file is not None:  # Ensure a file is uploaded
+            st.session_state.fetching = True
+            try:
+                # Fetch the sequences
+                output_file = fs.fetch_fasta_main(uploaded_file)
+                st.write(f"Debug: output_file = {output_file}")  # Debug output
+                
+                if output_file:
+                    # Attempt to open and provide download link
+                    try:
+                        with open(output_file, 'rb') as f:
+                            st.download_button(
+                                label="Download Sequences",
+                                data=f,
+                                file_name='sequences.fasta',
+                                mime='text/plain'
+                            )
+                        # Reset state only after successful fetch and button render
+                        st.session_state.fetching = False
+                        st.session_state.reset_uploader = True
+                        st.rerun()
+                    except FileNotFoundError:
+                        st.error(f"Error: Could not find file {output_file}")
+                    except Exception as e:
+                        st.error(f"Error opening file: {e}")
+                else:
+                    st.error("Error: No output file generated from fetch_fasta_main")
+                    st.session_state.fetching = False  # Reset fetching on failure
+            except Exception as e:
+                st.error(f"Error in fetch_fasta_main: {e}")
+                st.session_state.fetching = False  # Reset fetching on failure
+        else:
+            st.warning("Please upload a file before fetching sequences.")
     
     # Reset uploader state after rerun
-    if st.session_state.reset_uploader:
-        st.session_state.reset_uploader = False  # Reset the flag
-        st.rerun()  # Rerun again to stabilize with original key
+    if st.session_state.reset_uploader and not st.session_state.fetching:
+        st.session_state.reset_uploader = False
+        st.rerun()
     
     # Show fetching message only when in progress
     if st.session_state.fetching:
